@@ -1,3 +1,4 @@
+from os import name
 from sqlalchemy.sql.sqltypes import Boolean, Float, Integer, String
 from app.db.db import Base
 from sqlalchemy import Column
@@ -11,3 +12,9 @@ class Product(Base):
     technical_details = Column(String(255))
     image = Column(String(255))
     visible = Column(Boolean, default=True)
+
+class Supplier(Base):
+    __tablename__ = 'categories'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(45))

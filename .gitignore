@@ -2241,3 +2241,5 @@ app/api/product/__pycache__/views.cpython-310.pyc
 app/db/__pycache__/db.cpython-310.pyc
 app/db/database.db
 app/models/__pycache__/models.cpython-310.pyc
+app/api/suppliers/__pycache__/schemas.cpython-310.pyc
+app/api/suppliers/__pycache__/views.cpython-310.pyc
