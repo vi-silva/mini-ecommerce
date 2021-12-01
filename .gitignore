@@ -2243,3 +2243,7 @@ app/db/database.db
 app/models/__pycache__/models.cpython-310.pyc
 app/api/suppliers/__pycache__/schemas.cpython-310.pyc
 app/api/suppliers/__pycache__/views.cpython-310.pyc
+app/api/category/__pycache__/schemas.cpython-310.pyc
+app/api/category/__pycache__/views.cpython-310.pyc
+app/api/supplier/__pycache__/schemas.cpython-310.pyc
+app/api/supplier/__pycache__/views.cpython-310.pyc

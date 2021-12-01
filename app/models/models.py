@@ -14,6 +14,12 @@ class Product(Base):
     visible = Column(Boolean, default=True)
 
 class Supplier(Base):
+    __tablename__ = 'suppliers'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(45))
+
+class Category(Base):
     __tablename__ = 'categories'
 
     id = Column(Integer, primary_key=True)
