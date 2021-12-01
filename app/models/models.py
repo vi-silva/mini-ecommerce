@@ -1,5 +1,5 @@
 from os import name
-from sqlalchemy.sql.sqltypes import Boolean, Float, Integer, String
+from sqlalchemy.sql.sqltypes import Boolean, Float, Integer, String, SmallInteger
 from app.db.db import Base
 from sqlalchemy import Column
 
@@ -24,3 +24,10 @@ class Category(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(45))
+
+class PaymentMethods(Base):
+    __tablename__ = 'payment_methods'
+
+    id = Column(Integer, primary_key= True)
+    name = Column(String(45))
+    enabled = Column(SmallInteger())

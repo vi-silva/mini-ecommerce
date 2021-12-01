@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import APIRouter, status
 from fastapi.param_functions import Depends
 from sqlalchemy.orm import query
@@ -13,7 +14,7 @@ def create(category: CategorySchema , db: Session = Depends(get_db)):
     db.add(Category(**category.dict()))
     db.commit()
 
-@router.get('/', response_model=ShowCategorySchema)
+@router.get('/', response_model=List[ShowCategorySchema])
 def index(db: Session = Depends(get_db)):
     return db.query(Category).all()
 
@@ -25,4 +26,4 @@ def update(id: int, category: CategorySchema, db: Session = Depends(get_db) ):
 
 @router.get('/{id}', response_model= ShowCategorySchema)
 def show(id: int, db : Session = Depends(get_db)):
-    return db.query(Category).first()
+    return db.query(Category).filter_by(id=id).first()
