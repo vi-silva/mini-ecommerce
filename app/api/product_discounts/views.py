@@ -36,9 +36,10 @@ def delete(id: int, db: Session = Depends(get_db)):
     db.commit()
 
 def validate_discount(discount: ProductDiscountsSchema, db: Session):
+    payment_method_query = db.query(PaymentMethods).filter_by(id=discount.payment_method_id).first()
     if db.query(ProductDiscounts).filter_by(product_id=discount.product_id, payment_method_id=discount.payment_method_id).first():
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Payment method already discounted for this product')  
-    elif not db.query(PaymentMethods).filter_by(id=discount.payment_method_id).first():
+    elif not payment_method_query or payment_method_query.enabled == False:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Invalid payment method')  
     elif not db.query(Product).filter_by(id=discount.product_id).first():
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Invalid product')
@@ -46,10 +47,11 @@ def validate_discount(discount: ProductDiscountsSchema, db: Session):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Invalid value')
 
 def validate_discount_update(id:int, discount: ProductDiscountsSchema, db: Session):
+    payment_method_query = db.query(PaymentMethods).filter_by(id=discount.payment_method_id).first()
     query_discount = db.query(ProductDiscounts).filter_by(product_id=discount.product_id, payment_method_id=discount.payment_method_id).first()
     if query_discount and query_discount.id != id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Payment method already discounted for this product')  
-    elif not db.query(PaymentMethods).filter_by(id=discount.payment_method_id).first():
+    elif not payment_method_query or payment_method_query.enabled == False:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Invalid payment method')  
     elif not db.query(Product).filter_by(id=discount.product_id).first():
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Invalid product')
