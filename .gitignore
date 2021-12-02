@@ -2249,3 +2249,5 @@ app/api/supplier/__pycache__/schemas.cpython-310.pyc
 app/api/supplier/__pycache__/views.cpython-310.pyc
 app/api/payment_methods/__pycache__/schemas.cpython-310.pyc
 app/api/payment_methods/__pycache__/views.cpython-310.pyc
+app/api/product_discounts/__pycache__/schemas.cpython-310.pyc
+app/api/product_discounts/__pycache__/views.cpython-310.pyc

@@ -2,7 +2,7 @@ from typing import List
 from fastapi import APIRouter, status
 from fastapi import Depends
 
-from app.models.models import Product
+from app.models.models import Category, Product
 from .schemas import ProductSchema, ShowProductSchema
 from sqlalchemy.orm import Session
 from app.db.db import get_db
@@ -27,3 +27,9 @@ def update(id: int, product: ProductSchema, db: Session = Depends(get_db)):
 @router.get('/{id}', response_model=ShowProductSchema)
 def show(id:int, db:Session=Depends(get_db)):
     return db.query(Product).filter_by(id=id).first()
+
+@router.put('/{id}/category/{id_category}', status_code=status.HTTP_201_CREATED)
+def category_to_product(id: int, id_category: int, db: Session = Depends(get_db)):
+    query = db.query(Product).filter_by(id=id)
+    query.update({"category_id":id_category})
+    db.commit()
