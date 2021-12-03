@@ -3,13 +3,16 @@ from fastapi.param_functions import Depends
 from starlette import status
 from app.api.repositories.payment_method_repository import PaymentMethodRepository
 from app.api.repositories.product_discount_repository import ProductDiscountRepository
+from app.api.repositories.product_repository import ProductRepository
 from app.api.product_discounts.schemas import ProductDiscountsSchema
 from app.models.models import PaymentMethods, Product, ProductDiscounts
 
 class ProductDiscountService:
-    def __init__(self, payment_method_repository: PaymentMethodRepository = Depends(), product_discount_repository: ProductDiscountRepository = Depends()):
+    def __init__(self, payment_method_repository: PaymentMethodRepository = Depends(), product_discount_repository: ProductDiscountRepository = Depends(),
+                 product_repository: ProductRepository = Depends()):
         self.payment_method_repository = payment_method_repository
         self.product_discount_repository = product_discount_repository
+        self.product_repository = product_repository
 
     def create_discount( self, discount: ProductDiscountsSchema):
         self.validate_discount(discount)
@@ -25,8 +28,8 @@ class ProductDiscountService:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Payment method already discounted for this product')  
         elif payment_method_query.enabled != True:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Invalid payment method')  
-        # elif not self.session.query(Product).filter_by(id=discount.product_id).first():
-        #     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Invalid product')
+        elif not self.product_repository.get_by_id(discount.product_id):
+             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Invalid product')
         elif discount.value == 0:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Invalid value')
 
