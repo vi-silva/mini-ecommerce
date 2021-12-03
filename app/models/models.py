@@ -77,7 +77,7 @@ class Addresses(Base):
     __tablename__ = 'addresses'
 
     id = Column(Integer, primary_key=True)
-    addresses = Column(String(255))
+    address = Column(String(255))
     city = Column(String(45))
     state = Column(String(2))
     number = Column(String(10))
