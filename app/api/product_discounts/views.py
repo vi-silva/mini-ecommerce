@@ -30,5 +30,4 @@ def update(id: int, discount: ProductDiscountsSchema, service: ProductDiscountSe
 
 @router.delete('/{id}', status_code=status.HTTP_410_GONE)
 def delete(id: int, repository: ProductDiscountRepository = Depends()):
-    db.query(ProductDiscounts).filter_by(id=id).delete()
-    db.commit()
+    repository.delete(id)
