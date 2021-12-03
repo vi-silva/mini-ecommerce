@@ -28,6 +28,6 @@ def show(id: int, repository: ProductDiscountRepository = Depends()):
 def update(id: int, discount: ProductDiscountsSchema, service: ProductDiscountService = Depends()):
     service.update_discount(id, discount)
 
-@router.delete('/{id}', status_code=status.HTTP_410_GONE)
+@router.delete('/{id}')
 def delete(id: int, repository: ProductDiscountRepository = Depends()):
     repository.delete(id)
