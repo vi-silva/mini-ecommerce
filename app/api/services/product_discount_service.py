@@ -35,14 +35,12 @@ class ProductDiscountService:
 
     def validate_discount_update(self, id:int, discount: ProductDiscountsSchema):
         payment_method_query = self.payment_method_repository.get_by_id(discount.payment_method_id)
-        # self.session.query(PaymentMethods).filter_by(id=discount.payment_method_id).first()
         query_discount = self.product_discount_repository.get_by_product_and_payment_method(discount.product_id, discount.payment_method_id)
-        # self.session.query(ProductDiscounts).filter_by(product_id=discount.product_id, payment_method_id=discount.payment_method_id).first()
         if query_discount and query_discount.id != id:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail='Payment method already discounted for this product')  
         elif not payment_method_query or payment_method_query.enabled == False:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Invalid payment method')  
-        # elif not self.session.query(Product).filter_by(id=discount.product_id).first():
-        #     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Invalid product')
+        elif not self.product_repository.get_by_id(discount.product_id):
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Invalid product')
         elif discount.value == 0:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Invalid value')

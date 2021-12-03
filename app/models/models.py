@@ -1,6 +1,6 @@
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
-from sqlalchemy.sql.sqltypes import Boolean, DateTime, Float, Integer, String
+from sqlalchemy.sql.sqltypes import Boolean, Date, DateTime, Float, Integer, String
 from app.db.db import Base
 from sqlalchemy import Column
 
@@ -62,4 +62,28 @@ class Coupons(Base):
     type = Column(String(15))
     value = Column(Float)
 
+class Customers(Base):
+    __tablename__ = 'customers'
+
+    id = Column(Integer, primary_key=True)
+    first_name = Column(String(45))
+    last_name = Column(String(45))
+    phone_number = Column(String(15))
+    genre = Column(String(45))
+    document_id = Column(String(45))
+    birth_date = Column(Date)
+
+class Addresses(Base):
+    __tablename__ = 'addresses'
+
+    id = Column(Integer, primary_key=True)
+    addresses = Column(String(255))
+    city = Column(String(45))
+    state = Column(String(2))
+    number = Column(String(10))
+    zipcode = Column(String(6))
+    neighbourhood = Column(String(45))
+    primary = Column(Boolean)
+    customer_id = Column(Integer, ForeignKey('customers.id'))
+    customer = relationship(Customers)
 
