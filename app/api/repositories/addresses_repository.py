@@ -9,3 +9,7 @@ class AddressesRepository(BaseRepository):
 
     def remove_primary(self):
         return self.session.query(self.model).filter_by(primary = True).update({"primary": False})
+
+    def delete(self, id):
+        self.session.query(self.model).filter_by(id=id).delete()
+        self.session.commit()

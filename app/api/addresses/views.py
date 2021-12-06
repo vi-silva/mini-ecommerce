@@ -24,3 +24,7 @@ def show(id: int, repository: AddressesRepository = Depends()):
 @router.put('/{id}')
 def update(id: int, address: AddressesSchema,  service: AddressesService = Depends()):
     service.update(id, address)
+
+@router.delete('/{id}')
+def delete(id: int, repository: AddressesRepository = Depends()):
+    repository.delete(id)
