@@ -1,9 +1,9 @@
 from fastapi.exceptions import HTTPException
 from fastapi.param_functions import Depends
 from starlette import status
-from app.api.repositories.payment_method_repository import PaymentMethodRepository
-from app.api.repositories.product_discount_repository import ProductDiscountRepository
-from app.api.repositories.product_repository import ProductRepository
+from app.repositories.payment_method_repository import PaymentMethodRepository
+from app.repositories.product_discount_repository import ProductDiscountRepository
+from app.repositories.product_repository import ProductRepository
 from app.api.product_discounts.schemas import ProductDiscountsSchema
 from app.models.models import PaymentMethods, Product, ProductDiscounts
 

@@ -2,12 +2,12 @@ from typing import List
 from fastapi import APIRouter, status
 from fastapi.param_functions import Depends
 
-from app.api.repositories.coupons_repository import CouponsRepository
+from app.repositories.coupons_repository import CouponsRepository
 from app.api.coupons.schemas import CouponsSchema, ShowCouponsSchema, UpdateCouponsSchema
-from app.api.services.coupons_service import CouponsService
-from app.models.models import Coupons
+from app.services.auth_service import only_admin
+from app.services.coupons_service import CouponsService
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(only_admin)])
 
 @router.get('/', response_model=List[ShowCouponsSchema])
 def index(repository: CouponsRepository = Depends()):

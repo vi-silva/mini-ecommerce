@@ -2,9 +2,9 @@ from typing import List
 from fastapi import APIRouter, status
 from fastapi.param_functions import Depends
 
-from app.api.repositories.addresses_repository import AddressesRepository
+from app.repositories.addresses_repository import AddressesRepository
 from app.api.addresses.schemas import AddressesSchema, ShowAddressesSchema
-from app.api.services.addresses_service import AddressesService
+from app.services.addresses_service import AddressesService
 from app.models.models import Addresses
 
 router = APIRouter()

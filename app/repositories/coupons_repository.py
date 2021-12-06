@@ -1,4 +1,4 @@
-from app.api.repositories.base_repository import BaseRepository
+from app.repositories.base_repository import BaseRepository
 from app.db.db import Session, get_db
 from app.models.models import Coupons
 from fastapi import Depends

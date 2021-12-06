@@ -1,6 +1,6 @@
 from fastapi.param_functions import Depends
 from fastapi import HTTPException, status
-from app.api.repositories.coupons_repository import CouponsRepository
+from app.repositories.coupons_repository import CouponsRepository
 from app.models.models import Coupons
 from app.api.coupons.schemas import CouponsSchema
 

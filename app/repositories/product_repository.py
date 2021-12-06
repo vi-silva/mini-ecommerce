@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from fastapi import Depends
-from app.api.repositories.base_repository import BaseRepository
+from app.repositories.base_repository import BaseRepository
 from app.db.db import get_db
 from app.models.models import Product
 

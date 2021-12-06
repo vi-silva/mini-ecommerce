@@ -5,11 +5,12 @@ from sqlalchemy.orm.session import Session
 
 from app.api.supplier.schemas import ShowSupplierSchema, SupplierSchema
 from app.db.db import get_db
-from app.models.models import Product, Supplier
+from app.models.models import Supplier
+from app.services.auth_service import only_admin
 
 
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(only_admin)])
 
 @router.post('/', status_code= status.HTTP_201_CREATED)
 def create(supplier: SupplierSchema, db: Session = Depends(get_db)):

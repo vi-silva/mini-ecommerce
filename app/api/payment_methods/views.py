@@ -6,8 +6,9 @@ from app.api.payment_methods.schemas import PaymentMethodSchema, ShowPaymentMeth
 
 from app.db.db import get_db
 from app.models.models import PaymentMethods
+from app.services.auth_service import only_admin
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(only_admin)])
 
 @router.get('/', response_model=List[ShowPaymentMethodSchema])
 def index(db: Session = Depends(get_db)):

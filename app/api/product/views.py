@@ -3,10 +3,11 @@ from fastapi import APIRouter, status
 from fastapi import Depends
 
 from app.models.models import Product
+from app.services.auth_service import only_admin
 from .schemas import ProductSchema, ShowProductSchema
-from app.api.repositories.product_repository import ProductRepository
+from app.repositories.product_repository import ProductRepository
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(only_admin)]) #adicionando a necessidade de estar logado E ser um admin
 
 @router.post('/', status_code= status.HTTP_201_CREATED)
 def create(product: ProductSchema, repository: ProductRepository = Depends()):

@@ -1,7 +1,7 @@
 from app.db.db import Session, get_db
 from fastapi import Depends
 from app.models.models import PaymentMethods
-from app.api.repositories.base_repository import BaseRepository
+from app.repositories.base_repository import BaseRepository
 
 
 class PaymentMethodRepository(BaseRepository):

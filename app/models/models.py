@@ -1,3 +1,4 @@
+from fastapi.security import base
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.sql.sqltypes import Boolean, Date, DateTime, Float, Integer, String
@@ -22,6 +23,15 @@ class PaymentMethods(Base):
     id = Column(Integer, primary_key= True)
     name = Column(String(45))
     enabled = Column(Boolean)
+
+class User(Base):
+    __tablename__ = 'users'
+
+    id = Column(Integer, primary_key=True)
+    display_name = Column(String(100))
+    email = Column(String(50))
+    role = Column(String(10))
+    password = Column(String(100))
 
 class Product(Base):
     __tablename__ = 'products'
@@ -72,6 +82,8 @@ class Customers(Base):
     genre = Column(String(45))
     document_id = Column(String(45))
     birth_date = Column(Date)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    user = relationship(User)
 
 class Addresses(Base):
     __tablename__ = 'addresses'
@@ -86,4 +98,3 @@ class Addresses(Base):
     primary = Column(Boolean)
     customer_id = Column(Integer, ForeignKey('customers.id'))
     customer = relationship(Customers)
-
