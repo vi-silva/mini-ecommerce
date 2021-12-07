@@ -98,3 +98,33 @@ class Addresses(Base):
     primary = Column(Boolean)
     customer_id = Column(Integer, ForeignKey('customers.id'))
     customer = relationship(Customers)
+
+class Orders(Base):
+    __tablename__ = 'orders'
+    id = Column(Integer, primary_key=True)
+    number = Column(String(10))
+    status = Column(String(15))
+    customer_id = Column(Integer, ForeignKey('customers.id'))
+    customer = relationship(Customers)
+    created_at = Column(DateTime)
+    address_id = Column(Integer, ForeignKey('addresses.id'))
+    total_value = Column(Float(10,2))
+    payment_form_id = Column(Integer)
+    total_discount = Column(Float(10,2))
+
+class OrderStatuses(Base):
+    __tablename__ = 'order_statuses'
+    id = Column(Integer, primary_key=True)
+    order_id = Column(Integer, ForeignKey('orders.id'))
+    order = relationship(Orders)
+    status = Column(String(15))
+    created_at = Column(DateTime)
+
+class OrderProducts(Base):
+    __tablename__ = 'order_products'
+    id = Column(Integer, primary_key=True)
+    order_id = Column(Integer, ForeignKey('orders.id'))
+    order = relationship(Orders)
+    product_id = Column(Integer, ForeignKey('products.id'))
+    product = relationship(Product)
+    quantity = Column(Integer)

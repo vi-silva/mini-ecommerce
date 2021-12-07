@@ -40,7 +40,9 @@ def upgrade():
     sa.Column('genre', sa.String(length=45), nullable=True),
     sa.Column('document_id', sa.String(length=45), nullable=True),
     sa.Column('birth_date', sa.Date(), nullable=True),
-    sa.PrimaryKeyConstraint('id')
+    sa.Column('user_id', sa.Integer(), nullable=True),
+    sa.PrimaryKeyConstraint('id'),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     )
     op.create_table('payment_methods',
     sa.Column('id', sa.Integer(), nullable=False),
