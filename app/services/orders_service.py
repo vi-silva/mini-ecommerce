@@ -4,6 +4,7 @@ from fastapi import HTTPException, status
 from fastapi.param_functions import Depends
 from app.api.orders.schemas import InputOrderSchema, InputProductSchema, OrderProductsSchema, OrderSchema, OrderStatus, OrderStatusSchema
 from app.api.coupons.schemas import CouponType
+from app.api.product_discounts.schemas import DiscountMode
 from app.models.models import OrderProducts, OrderStatuses, Orders, User
 from app.repositories.orders_repository import OrdersRepository
 from app.repositories.order_statuses_repository import OrderStatusesRepository
@@ -12,6 +13,7 @@ from app.repositories.customers_repository import CustomersRepository
 from app.repositories.product_repository import ProductRepository
 from app.repositories.addresses_repository import AddressesRepository
 from app.repositories.payment_method_repository import PaymentMethodRepository
+from app.repositories.product_discount_repository import ProductDiscountRepository
 from app.services.coupons_service import CouponsService
 from random import randint
 
@@ -23,7 +25,8 @@ class OrderService:
                 customers_repository: CustomersRepository = Depends(),
                 address_repository: AddressesRepository = Depends(),
                 coupons_service: CouponsService = Depends(),
-                payment_method_repository: PaymentMethodRepository = Depends()) -> None:
+                payment_method_repository: PaymentMethodRepository = Depends(),
+                product_discount_repository: ProductDiscountRepository = Depends()) -> None:
         self.orders_repository = orders_repository
         self.order_product_repository = order_product_repository
         self.order_statuses_repository = order_statuses_repository
@@ -32,6 +35,7 @@ class OrderService:
         self.addresses_repository = address_repository
         self.coupons_service = coupons_service
         self.payment_method_repository = payment_method_repository
+        self.product_discount_repository = product_discount_repository
 
     def create(self, input_order_schema: InputOrderSchema, user: User):
         order_schema = self.generate_order(input_order_schema, user.id)
@@ -55,7 +59,7 @@ class OrderService:
             customer_id = self.get_customer_id(user_id),
             address_id = input_order_schema.address_id,
             total_value = total_value_from_products,
-            total_discount = self.get_discount_value(input_order_schema.coupon_code, total_value_from_products)
+            total_discount = self.get_discount_value(input_order_schema.coupon_code, total_value_from_products, input_order_schema.products, input_order_schema.payment_form_id)
         )
 
     def create_order_number(self)-> int:
@@ -67,7 +71,28 @@ class OrderService:
     def create_order_status(self, id_order: int, current_status: OrderStatus):
         self.order_statuses_repository.create(OrderStatuses(**OrderStatusSchema(id_order,current_status,datetime.now()).__dict__))
 
-    def get_discount_value(self, code: str, total_value: float):
+    def get_discount_value(self, code: str, total_value: float, products: List[InputProductSchema], payment_method_id : int):
+        total_discount = self.get_coupon_discount(code, total_value)
+        if total_discount != 0:
+            return total_discount
+        total_discount = self.get_product_payment_discount(total_value,products,payment_method_id)
+        if total_discount != 0:
+            return total_discount
+        return 0
+
+    def get_product_payment_discount(self, total_value: float, products: List[InputProductSchema], payment_method_id: int):
+        self.get_coupon_discount
+        only_one = self.only_one_product(products)
+        if only_one:
+            query = self.product_discount_repository.get_by_product_and_payment_method(only_one, payment_method_id)
+            if query:
+                if query.mode == DiscountMode.VALUE:
+                    return float(query.value)
+                if query.mode == DiscountMode.PERCENTAGE:
+                    return (query.value/100)*total_value
+        return 0
+
+    def get_coupon_discount(self, code: str, total_value: float):
         query = self.coupons_service.query_valid_by_code(code)
         if query:
             if query.type == CouponType.VALUE:
@@ -76,10 +101,21 @@ class OrderService:
                 return (query.value/100)*total_value
         return 0
 
+    def only_one_product(self,products: List[InputProductSchema]):
+        first_id = products[0].id
+        for product in products:
+            if product.id != first_id:
+                return None
+        return first_id
+        
+
     def get_products_value(self, products: List[InputProductSchema]):
         value: float = 0.00
         for product in products:
-            value += (float(self.products_repository.get_by_id(product.id).price) * product.quantity)
+            query = self.products_repository.get_by_id(product.id)
+            if not query:
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='invalid product')
+            value += (float(query.price) * product.quantity)
         return value
 
     def validate_address(self, customer_id, address_id):

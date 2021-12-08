@@ -2,6 +2,11 @@ from typing import List, Optional
 from pydantic import BaseModel
 from enum import Enum
 from datetime import datetime
+from app.api.customers.schemas import ShowCustomersSchema
+from app.api.payment_methods.schemas import ShowPaymentMethodSchema
+from app.api.addresses.schemas import ShowAddressesSchema
+
+from app.db.db import Base
 
 class OrderStatus(str, Enum):
     ORDER_PLACED = 'order_placed'
@@ -23,6 +28,22 @@ class InputOrderSchema(BaseModel):
 
 class InputOrderStatusSchema(BaseModel):
     status:OrderStatus
+
+class ShowOrderSchema(BaseModel):
+    number: str
+    status: str
+    customer_id: int
+    customer: ShowCustomersSchema
+    created_at: datetime
+    address_id: int
+    address: ShowAddressesSchema
+    total_value: float
+    payment_form_id:int
+    payment_form: ShowPaymentMethodSchema
+    total_discount:float
+
+    class Config:
+        orm_mode = True
 
 class OrderSchema():
     def __init__(self,number: str,status: str,customer_id: int,created_at: datetime,address_id: int,total_value: float,payment_form_id:int,total_discount:float) -> None:

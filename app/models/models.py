@@ -108,8 +108,10 @@ class Orders(Base):
     customer = relationship(Customers)
     created_at = Column(DateTime)
     address_id = Column(Integer, ForeignKey('addresses.id'))
+    address = relationship(Addresses)
     total_value = Column(Float(10,2))
-    payment_form_id = Column(Integer)
+    payment_form_id = Column(Integer, ForeignKey('payment_methods.id'))
+    payment_form = relationship(PaymentMethods)
     total_discount = Column(Float(10,2))
 
 class OrderStatuses(Base):
