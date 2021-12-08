@@ -24,18 +24,16 @@ class InputOrderSchema(BaseModel):
 class InputOrderStatusSchema(BaseModel):
     status:OrderStatus
 
-class OrderSchema(BaseModel):
-    number: str = ''
-    status: str = ''
-    customer_id:int = 0
-    created_at: datetime = datetime.now()
-    address_id: int = 0
-    total_value: float = 0
-    payment_form_id: int = 0
-    total_discount: float = 0
-
-    class Config:
-        orm_mode = True
+class OrderSchema():
+    def __init__(self,number: str,status: str,customer_id: int,created_at: datetime,address_id: int,total_value: float,payment_form_id:int,total_discount:float) -> None:
+        self.number = number
+        self.status = status
+        self.customer_id = customer_id
+        self.created_at = created_at
+        self.address_id = address_id
+        self.total_value = total_value
+        self.payment_form_id = payment_form_id
+        self.total_discount = total_discount
 
 class OrderStatusSchema:
     def __init__(self,order_id: int, status:OrderStatus, created_at: datetime) -> None:
