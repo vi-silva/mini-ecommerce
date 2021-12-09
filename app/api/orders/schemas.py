@@ -45,7 +45,7 @@ class ShowOrderSchema(BaseModel):
     class Config:
         orm_mode = True
 
-class OrderSchema():
+class OrderSchema: #TODO converter para um DTO - muda o nome
     def __init__(self,number: str,status: str,customer_id: int,created_at: datetime,address_id: int,total_value: float,payment_form_id:int,total_discount:float) -> None:
         self.number = number
         self.status = status

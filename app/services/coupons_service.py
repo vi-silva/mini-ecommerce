@@ -18,6 +18,6 @@ class CouponsService:
         query = self.coupons_repository.query_by_code(code)
         if not query or datetime.now() > query.expire_at or query.limit <= 0:
             return None
-        self.coupons_repository.update(query.id, {'limit':f'{query.limit-1}'})
+        self.coupons_repository.update(query.id, {'limit':query.limit-1}) #alterado
         return query
         

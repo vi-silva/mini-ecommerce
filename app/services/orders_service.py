@@ -62,6 +62,8 @@ class OrderService:
             total_discount = self.get_discount_value(input_order_schema.coupon_code, total_value_from_products, input_order_schema.products, input_order_schema.payment_form_id)
         )
 
+    #uuid - gerar str aleatorios nao repetidos - quase impossivel de ser igual - tem 100 caracteres então cuidado ao usar -slice it
+    #use timestamp pode ser
     def create_order_number(self)-> int:
         number = randint(0,9999)
         if not self.orders_repository.get_by_number(number):
