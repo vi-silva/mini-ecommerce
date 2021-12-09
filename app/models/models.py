@@ -49,6 +49,8 @@ class Product(Base):
     category_id = Column(Integer, ForeignKey('categories.id'))
     category = relationship(Category)
 
+    discounts = relationship('ProductDiscounts')
+
 class ProductDiscounts(Base):
     __tablename__ = 'product_discounts'
 

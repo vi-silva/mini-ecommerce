@@ -18,3 +18,6 @@ class BaseRepository:
 
     def get_by_id(self, id: int):
         return self.session.query(self.model).filter_by(id=id).first()
+
+    def query(self):
+        return self.session.query(self.model)
