@@ -10,6 +10,6 @@ class ProductDiscountRepository(BaseRepository):
     def get_by_product_and_payment_method(self, product_id: int, payment_method_id: int ):
         return self.session.query(self.model).filter_by(product_id=product_id, payment_method_id=payment_method_id).first()
 
-    def delete(self, int: id):
+    def delete(self, id: int):
         self.session.query(self.model).filter_by(id=id).delete()
         self.session.commit()

@@ -8,11 +8,13 @@ from app.services.auth_service import only_admin
 from app.db.db import get_db
 from app.models.models import Category
 
-router = APIRouter(dependencies=[Depends(only_admin)])
+router = APIRouter(
+    dependencies=[Depends(only_admin)]
+    )
 
-@router.post('/', status_code=status.HTTP_201_CREATED)
+@router.post('/', status_code=status.HTTP_201_CREATED, response_model=ShowCategorySchema)
 def create(category: CategorySchema , repository: CategoryRepository = Depends()):
-    repository.create(Category(**category.dict()))
+    return repository.create(Category(**category.dict()))
 
 @router.get('/', response_model=List[ShowCategorySchema])
 def index(repository: CategoryRepository = Depends()):

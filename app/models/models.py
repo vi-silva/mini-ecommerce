@@ -49,7 +49,7 @@ class Product(Base):
     category_id = Column(Integer, ForeignKey('categories.id'))
     category = relationship(Category)
 
-    discounts = relationship('ProductDiscounts')
+    discounts = relationship('ProductDiscounts', backref='product')
 
 class ProductDiscounts(Base):
     __tablename__ = 'product_discounts'
@@ -59,7 +59,7 @@ class ProductDiscounts(Base):
     value = Column(Float)
     
     product_id = Column(Integer, ForeignKey('products.id'))
-    product = relationship(Product)
+    # product = relationship(Product)
 
     payment_method_id = Column(Integer, ForeignKey('payment_methods.id'))
     payment_method = relationship(PaymentMethods)
