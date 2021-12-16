@@ -6,8 +6,10 @@ from sqlalchemy import create_engine
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker
 from app.db.db import get_db
-from app.models.models import Base, Category, PaymentMethods, Product, User, Supplier
+from app.models.models import Addresses, Base, Category, Customers, PaymentMethods, Product, User, Supplier
 from app.app import app
+from datetime import date
+from app.services.auth_service import create_token
 
 @pytest.fixture()
 def db_session():
@@ -15,8 +17,10 @@ def db_session():
     Session = sessionmaker(bind=engine)
     Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
-    yield Session()
-
+    db = Session()
+    yield db
+    db.close()
+    
 @pytest.fixture()
 def override_get_db(db_session):
     def _override_get_db():
@@ -37,13 +41,30 @@ def user_factory(db_session):
             model = User
             sqlalchemy_session = db_session
         
-        id = None
+        id = factory.Faker('pyint')
         display_name = factory.Faker('name')
         email = factory.Faker('email')
         role = None
         password = '$2b$12$JkLyS1O5KRlXYTidS/hiqutvLWtcxiemxeKJv0CqmL5aSVWL/toDa' #123
     
     return UserFactory
+
+#TODO descobrir uma forma melhor de fazer isso
+@pytest.fixture()
+def user_customer_factory(db_session):
+    class UserFactory(factory.alchemy.SQLAlchemyModelFactory):
+        class Meta:
+            model = User
+            sqlalchemy_session = db_session
+        
+        id = factory.Faker('pyint')
+        display_name = factory.Faker('name')
+        email = factory.Faker('email')
+        role = 'customer'
+        password = '$2b$12$JkLyS1O5KRlXYTidS/hiqutvLWtcxiemxeKJv0CqmL5aSVWL/toDa' #123
+    
+    return UserFactory
+
 
 @pytest.fixture()
 def category_factory(db_session):
@@ -70,6 +91,43 @@ def supplier_factory(db_session):
     return SupplierFactory
 
 @pytest.fixture()
+def address_factory(db_session):
+    class AddressFactory(factory.alchemy.SQLAlchemyModelFactory):
+        class Meta:
+            model = Addresses
+            sqlalchemy_session = db_session
+
+        id = factory.Faker('pyint')
+        address = factory.Faker('name')
+        city = factory.Faker('name')
+        state = factory.Faker('name')
+        number = factory.Faker('name')
+        zipcode = factory.Faker('name')
+        neighbourhood = factory.Faker('name')
+        primary = True
+        customer_id = None
+
+    return AddressFactory
+
+@pytest.fixture()
+def customer_factory(db_session, user_customer_factory):
+    class CustomerFactory(factory.alchemy.SQLAlchemyModelFactory):
+        class Meta:
+            model = Customers
+            sqlalchemy_session = db_session
+        
+        id = factory.Faker('pyint')
+        first_name = factory.Faker('name')
+        last_name = factory.Faker('name')
+        phone_number = '999999999'
+        genre = 'm'
+        document_id = factory.Faker('pyint')
+        birth_date = date.today()
+        user = factory.SubFactory(user_customer_factory)
+    
+    return CustomerFactory
+
+@pytest.fixture()
 def payment_method_factory(db_session):
     class PaymentMethodFactory(factory.alchemy.SQLAlchemyModelFactory):
         class Meta:
@@ -79,6 +137,21 @@ def payment_method_factory(db_session):
         id = factory.Faker('pyint')
         name = factory.Faker('name')
         enabled = True
+    
+    return PaymentMethodFactory
+
+#TODO achar uma forma melhor de fazer isso
+#ter um fixture que aceite parametros opcionais
+@pytest.fixture()
+def disabled_payment_method_factory(db_session):
+    class PaymentMethodFactory(factory.alchemy.SQLAlchemyModelFactory):
+        class Meta:
+            model = PaymentMethods
+            sqlalchemy_session = db_session
+        
+        id = factory.Faker('pyint')
+        name = factory.Faker('name')
+        enabled = False
     
     return PaymentMethodFactory
 
@@ -102,11 +175,18 @@ def product_factory(db_session, category_factory, supplier_factory):
 
 @pytest.fixture()
 def user_admin_token(user_factory):
-    user_factory(role='admin')
-
-    return 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiZXhwIjoxNjY1NDIwODc0fQ.o_syoOwrg8VOvl5nWYnA0waXxL0pFLdUgJY8HoqMVjM'
+    user = user_factory(role='admin')
+    print(user.id)
+    token = create_token({'id':user.id})
+    return token
 
 
 @pytest.fixture()
 def admin_auth_header(user_admin_token):
     return {'Authorization': f'Bearer {user_admin_token}'}
+
+@pytest.fixture()
+def user_customer_data(customer_factory):
+    customer = customer_factory()
+    token = create_token({'id':customer.user.id})
+    return ({'Authorization': f'Bearer {token}'}, customer) 

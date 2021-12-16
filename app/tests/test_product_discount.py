@@ -85,4 +85,35 @@ def test_delete(client: TestClient, admin_auth_header, product_factory, payment_
     response = client.get('/product-discount/1', headers=admin_auth_header)
     assert response.status_code == 200
     assert response.json() == None
+
+def test_product_discount_disabled_payment(client: TestClient, admin_auth_header, product_factory, disabled_payment_method_factory):
+    product = product_factory()
+    payment_method = disabled_payment_method_factory()
+    response = client.post('/product-discount/',headers=admin_auth_header, json={
+        'mode': 'value',
+        'value': 2.50,
+        'payment_method_id': payment_method.id,
+        'product_id': product.id
+    })
+    assert response.status_code == 400
+    assert response.json()['detail'] == 'Invalid payment method'
+
+def test_multiple_discount_same_payment_method(client: TestClient, admin_auth_header, product_factory, payment_method_factory):
+    product = product_factory()
+    payment_method = payment_method_factory()
+    response = client.post('/product-discount/',headers=admin_auth_header, json={
+        'mode': 'value',
+        'value': 2.50,
+        'payment_method_id': payment_method.id,
+        'product_id': product.id
+    })
+    assert response.status_code == 201
+    response = client.post('/product-discount/',headers=admin_auth_header, json={
+        'mode': 'value',
+        'value': 2.50,
+        'payment_method_id': payment_method.id,
+        'product_id': product.id
+    })
+    assert response.status_code == 403
+    assert response.json()['detail'] == 'Payment method already discounted for this product'
     

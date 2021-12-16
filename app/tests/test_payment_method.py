@@ -62,3 +62,16 @@ def test_get_all(client: TestClient, admin_auth_header):
     for i in range(9):
         assert response.json()[i]['name'] == f'TEST METHOD {i+1}'
         assert response.json()[i]['enabled'] == True
+
+def test_delete(client: TestClient, admin_auth_header):
+    response = client.post('/payment-method/', headers=admin_auth_header,json={
+        'name': 'TEST METHOD',
+        'enabled': True
+    })
+    assert response.status_code == 201
+    response = client.delete('/payment-method/', headers=admin_auth_header)
+    assert response.status_code == 405
+    response = client.get('/payment-method/1',headers=admin_auth_header)
+    assert response.status_code == 200
+    assert response.json()['name'] == 'TEST METHOD'
+    assert response.json()['enabled'] == True

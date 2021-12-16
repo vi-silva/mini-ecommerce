@@ -36,3 +36,14 @@ def test_get_all(client: TestClient, admin_auth_header):
     assert response.status_code == 200
     for i in range(1,7):
         assert response.json()[i-1]['name'] == f'VENDEDOR {i}'
+
+def test_delete(client: TestClient, admin_auth_header):
+    response = client.post('/supplier/',headers=admin_auth_header,json={
+        'name' : 'VENDEDOR 1'
+    })
+    assert response.status_code == 201
+    response = client.delete('/supplier/1', headers=admin_auth_header)
+    assert response.status_code == 405
+    response = client.get('/supplier/1', headers=admin_auth_header)
+    assert response.status_code == 200
+    assert response.json()['name'] == 'VENDEDOR 1'
