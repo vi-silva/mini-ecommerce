@@ -116,14 +116,14 @@ class OrderService:
         for product in products:
             query = self.products_repository.get_by_id(product.id)
             if not query:
-                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='invalid product')
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Invalid product')
             value += (float(query.price) * product.quantity)
         return value
 
     def validate_address(self, customer_id, address_id):
         query = self.addresses_repository.get_by_id(address_id) 
         if not query or query.customer_id != customer_id:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Inválid address')
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Invalid address')
 
     def validate_payment(self, payment_method_id: int):
         if not self.payment_method_repository.get_by_id(payment_method_id):
