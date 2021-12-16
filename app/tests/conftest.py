@@ -6,9 +6,9 @@ from sqlalchemy import create_engine
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker
 from app.db.db import get_db
-from app.models.models import Addresses, Base, Category, Customers, PaymentMethods, Product, User, Supplier
+from app.models.models import Addresses, Base, Category, Coupons, Customers, PaymentMethods, Product, User, Supplier
 from app.app import app
-from datetime import date
+from datetime import date, datetime, timedelta
 from app.services.auth_service import create_token
 
 @pytest.fixture()
@@ -174,9 +174,24 @@ def product_factory(db_session, category_factory, supplier_factory):
     return ProductFactory
 
 @pytest.fixture()
+def coupon_factory(db_session):
+    class CouponFactory(factory.alchemy.SQLAlchemyModelFactory):
+        class Meta:
+            model = Coupons
+            sqlalchemy_session = db_session
+
+        id = factory.Faker('pyint')
+        code = 'TESTE'
+        expire_at = datetime.today()+timedelta(days=10)
+        limit = None
+        type = 'value'
+        value = 10
+        
+    return CouponFactory
+
+@pytest.fixture()
 def user_admin_token(user_factory):
     user = user_factory(role='admin')
-    print(user.id)
     token = create_token({'id':user.id})
     return token
 

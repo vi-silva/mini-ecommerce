@@ -118,7 +118,7 @@ class OrderService:
             if not query:
                 raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='Invalid product')
             value += (float(query.price) * product.quantity)
-        return value
+        return round(value,2)
 
     def validate_address(self, customer_id, address_id):
         query = self.addresses_repository.get_by_id(address_id) 
