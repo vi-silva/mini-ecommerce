@@ -7,8 +7,8 @@ class AddressesRepository(BaseRepository):
     def __init__(self, session: Session = Depends(get_db)) -> None:
         super().__init__(session, Addresses)
 
-    def remove_primary(self):
-        return self.session.query(self.model).filter_by(primary = True).update({"primary": False})
+    def remove_primary(self, customer_id: int):
+        return self.session.query(self.model).filter_by(primary = True, customer_id = customer_id).update({"primary": False})
 
     def delete(self, id):
         self.session.query(self.model).filter_by(id=id).delete()

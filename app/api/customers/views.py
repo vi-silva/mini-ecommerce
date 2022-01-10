@@ -1,11 +1,12 @@
 from typing import List
 from fastapi import APIRouter, status
 from fastapi.param_functions import Depends
+from app.models.models import User
 
 from app.repositories.customers_repository import CustomersRepository
-from app.api.customers.schemas import CustomersInsertSchema, CustomersSchema, ShowCustomersSchema, UpdateCustomersSchema
-from app.models.models import Customers
+from app.api.customers.schemas import CustomersInsertSchema, ShowCustomersSchema, UpdateCustomersSchema
 from app.services.customers_service import CustomersService
+from app.services.auth_service import get_user, only_admin
 
 router = APIRouter()
 
@@ -21,6 +22,6 @@ def create(customer: CustomersInsertSchema, service: CustomersService = Depends(
 def show(id: int, repository: CustomersRepository = Depends()):
     return repository.get_by_id(id)
 
-@router.put('/{id}')
-def update(id: int, customer: UpdateCustomersSchema, repository: CustomersRepository = Depends()):
-    repository.update(id, customer.dict())
+@router.put('/{id}', dependencies=[Depends(get_user)])
+def update(id: int, customer: UpdateCustomersSchema, service: CustomersService = Depends(), user : User  = Depends(get_user)):
+    service.update(id, user, customer)

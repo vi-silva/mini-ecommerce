@@ -6,7 +6,6 @@ class AdminSchema(BaseModel):
     display_name: str
     email: str
     password: str
-    role = 'admin'
 
 class ShowAdminSchema(BaseModel):
     id: int

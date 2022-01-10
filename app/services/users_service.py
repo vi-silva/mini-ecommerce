@@ -12,10 +12,19 @@ class UsersService:
     def __init__(self, users_repository: UserRepository = Depends()) -> None:
         self.users_repository = users_repository
 
-    def create(self, schema: Union[UserSchema, AdminSchema]):
+    def create(self, schema: UserSchema):
         self.unique_email(schema.email)
         schema.password = bcrypt.hashpw(schema.password.encode('utf8'), bcrypt.gensalt())
-        self.users_repository.create(User(**schema.dict()))
+        user = User(**schema.dict())
+        user.role = 'customer'
+        self.users_repository.create(user)
+
+    def create_admin(self, schema: AdminSchema):
+        self.unique_email(schema.email)
+        schema.password = bcrypt.hashpw(schema.password.encode('utf8'), bcrypt.gensalt())
+        user = User(**schema.dict())
+        user.role = 'admin'
+        self.users_repository.create(user)
 
     def update(self, id: int, schema: Union[UserSchema, AdminSchema]):
         self.unique_email_update(schema.email, id)

@@ -221,4 +221,8 @@ def test_update(client: TestClient, address_factory, product_factory, payment_me
     response = client.get('/orders/1',headers=admin_auth_header)
     assert response.status_code == 200
     assert response.json()['status'] == 'order_paid'
+    assert client.patch('/orders/1?order_status=order_cancelled', headers=admin_auth_header).status_code == 200
+    response = client.get('/orders/1',headers=admin_auth_header)
+    assert response.status_code == 200
+    assert response.json()['status'] == 'order_cancelled'
     

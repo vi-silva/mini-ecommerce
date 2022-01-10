@@ -16,7 +16,7 @@ def index(repository: UserRepository = Depends()):
 
 @router.post('/', status_code=status.HTTP_201_CREATED)
 def create(admin_schema: AdminSchema ,service: UsersService = Depends()):
-    service.create(admin_schema)
+    service.create_admin(admin_schema)
 
 @router.get('/{id}', response_model=ShowAdminSchema)
 def show(id: int, repository: UserRepository = Depends()):

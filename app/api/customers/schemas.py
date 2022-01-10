@@ -11,7 +11,9 @@ class CustomersSchema(BaseModel):
     birth_date: date
     
 class CustomersInsertSchema(CustomersSchema):
-    user: UserSchema
+    display_name: str
+    email: str
+    password: str
     
 
 class UpdateCustomersSchema(BaseModel):
@@ -20,6 +22,8 @@ class UpdateCustomersSchema(BaseModel):
     phone_number: str
     genre: str
     birth_date: date
+    email: str
+    password: str
 
 class ShowCustomersSchema(CustomersSchema):
     id: int
